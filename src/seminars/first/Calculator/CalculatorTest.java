@@ -1,9 +1,5 @@
 package seminars.first.Calculator;
 
-import seminars.first.Calculator.Calculator;
-
-import static org.assertj.core.api.Assertions.*;
-
 public class CalculatorTest {
     public static void main(String[] args) {
         // Проверка базового функционала с целыми числами:
