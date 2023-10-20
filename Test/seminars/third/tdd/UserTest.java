@@ -68,4 +68,35 @@ public class UserTest {
         assertThat(repository.data.size())
                 .isEqualTo(currentCount);
     }
+
+
+
+
+
+    @Test
+    void checkRepositoryFindAdminPositive (){
+        String name = "name";
+        String password = "password";
+
+        User user = new User(name, password, true);
+        boolean accept =  user.authenticate(name,password);
+        repository.addUser(user);
+        repository.logOutExceptAdmin();
+        User userForCheck = repository.data.get(0);
+        assertThat(userForCheck.isAuthenticate).isTrue();
+
+    }
+
+    @Test
+    void checkRepositoryFindAdminNegative (){
+        String name = "name";
+        String password = "password";
+
+        User user = new User(name, password, false);
+        boolean accept =  user.authenticate(name,password);
+        repository.addUser(user);
+        repository.logOutExceptAdmin();
+        User userForCheck = repository.data.get(0);
+        assertThat(userForCheck.isAuthenticate).isFalse();
+    }
 }

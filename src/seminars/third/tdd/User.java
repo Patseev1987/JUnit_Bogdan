@@ -9,9 +9,16 @@ public class User {
 
     boolean isAuthenticate = false;
 
+
+    boolean isAdmin;
+
     public User(String name, String password, boolean isAdmin) {
         this.name = name;
         this.password = password;
+        this.isAdmin = isAdmin;
+    }
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     //3.6.
@@ -22,4 +29,9 @@ public class User {
         return isAuthenticate;
     }
 
+    public void logout() {
+        isAuthenticate = false;
+        name = "";
+        password = "";
+    }
 }

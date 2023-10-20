@@ -21,4 +21,12 @@ public class UserRepository {
         }
         return false;
     }
+
+    public void logOutExceptAdmin() {
+        for (User user:data) {
+            if (!(user.isAdmin)){
+                user.logout();
+            }
+        }
+    }
 }
