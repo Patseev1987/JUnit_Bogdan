@@ -3,148 +3,154 @@ package seminars.third.coverage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SomeServiceTest {
-   // 3.1.
-   SomeService service;
+    private SomeService someService;
+
     @BeforeEach
-    void setUp(){
-        service = new SomeService();
+    void setUp() {
+        someService = new SomeService();
+    }
+
+   // 3.1.
+//    @Test
+//    public void multipleThreeNotFiveReturnsFizz() {
+//        // 3, 6, 9, 33
+//        assertEquals("Fizz", someService.fizzBuzz(3));
+//    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {3, 6, 9, 33})
+    void multipleThreeNotFiveReturnsFizz(int n) {
+        assertEquals("Fizz", someService.fizzBuzz(n));
     }
 
     @ParameterizedTest
-    @ValueSource(ints ={3,6,9,12})
-    void multipleThreeNotFiveReturnsFizz(int input) {
-         String actual = service.fizzBuzz(input);
-
-         assertThat(actual).isEqualTo("Fizz");
+    @ValueSource(ints = {5, 10, 20, 55})
+    void multipleFiveNotThreeReturnsBuzz(int n) {
+        assertEquals("Buzz", someService.fizzBuzz(n));
     }
 
     @ParameterizedTest
-    @ValueSource(ints ={5,10,20,25})
-    void multipleFiveNotThreeReturnsBuzz(int input) {
-        String actual = service.fizzBuzz(input);
-
-        assertThat(actual).isEqualTo("Buzz");
+    @ValueSource(ints = {15, 225, 3375})
+    void multipleThreeAndFiveReturnsFizzBuzz(int n) {
+        assertEquals("FizzBuzz", someService.fizzBuzz(n));
     }
 
     @ParameterizedTest
-    @ValueSource(ints ={15,30,45,60})
-    void multipleFiveWithThreeReturnsFizzBuzz(int input) {
-        String actual = service.fizzBuzz(input);
-
-        assertThat(actual).isEqualTo("FizzBuzz");
+    @ValueSource(ints = {15, 225, 3375})
+    void multipleThreeAndFieReturnsFizzBuzz(int n) {
+        assertEquals("FizzBuzz", someService.fizzBuzz(n));
     }
 
     @ParameterizedTest
-    @ValueSource(ints ={14,31,46,61})
-    void multipleNoFiveNoThreeReturnsValue(int input) {
-        String actual = service.fizzBuzz(input);
-        assertThat(actual).isEqualTo(String.valueOf(input));
+    @ValueSource(ints = {1, 2, 41, 43})
+    void notMultipleOfThreeOfFieReturnsNumber(int n) {
+        assertEquals(Integer.toString(n), someService.fizzBuzz(n));
+    }
+
+    // 3.2.
+    @Test
+    void first6arrayShouldReturnTrue() {
+        assertTrue(someService.firstLast6(new int[]{6, 3, 5, 3}));
     }
 
     @Test
-    void checkNullableArray(){
-        boolean actual = service.firstLast6(null);
-        assertFalse(actual);
+    void last6arrayShouldReturnTrue() {
+        assertTrue(someService.firstLast6(new int[]{2, 345, 6}));
     }
 
     @Test
-    void checkEmptyArray(){
-        boolean actual = service.firstLast6(new int[]{});
-        assertFalse(actual);
+    void noLast6arrayShouldReturnFalse() {
+        assertFalse(someService.firstLast6(new int[]{2, 345, 2}));
+    }
+
+    // 3.3.
+    // Недостаточное покрытие
+    @Test
+    void insufficientCoverageTest(){
+
+        System.out.println(someService.calculatingDiscount(2000, 10));
+        assertThat(someService.calculatingDiscount(2000, 50))
+                .isEqualTo(1000); // обычная скидка
+        assertThat(someService.calculatingDiscount(2000, 100))
+                .isEqualTo(0); // обычная скидка
+        assertThat(someService.calculatingDiscount(2000, 0))
+                .isEqualTo(2000); // обычная скидка
+
+
+        assertThatThrownBy(() ->
+                someService.calculatingDiscount(2000, 110))
+                .isInstanceOf(ArithmeticException.class)
+                .hasMessage("Скидка должна быть от 0 до 100%"); // процент скидки больше 100%
+
+        assertThatThrownBy(() ->
+                someService.calculatingDiscount(2000, -10))
+                .isInstanceOf(ArithmeticException.class)
+                .hasMessage("Скидка должна быть от 0 до 100%"); // процент скидки меньше 0
+
+        assertThatThrownBy(() ->
+                someService.calculatingDiscount(-2000, 10))
+                .isInstanceOf(ArithmeticException.class)
+                .hasMessage("Скидка не может быть отрицательной");
     }
 
     @Test
-    void checkWithout6Array(){
-        boolean actual = service.firstLast6(new int[]{0,0,0});
-        assertFalse(actual);
+    void negativePurchaseAmountReturnException() {
+        // Отрицательные числа. Сумма покупки
+        // Ожидаемый результат: ошибка ArithmeticException с описанием "Сумма покупки не может быть отрицательной"
+        assertThatThrownBy(() -> someService.calculatingDiscount(-1000, 50))
+                .isInstanceOf(ArithmeticException.class).hasMessage("Сумма покупки не может быть отрицательной");
+
     }
 
     @Test
-    void checkFirst6Array(){
-        boolean actual = service.firstLast6(new int[]{6,0,0});
-        assertTrue(actual);
-    }
-    @Test
-    void checkLast6Array(){
-        boolean actual = service.firstLast6(new int[]{0,0,6});
-        assertTrue(actual);
+    void negativePurchaseDiscountReturnException() {
+        // Отрицательные числа. Процент
+        // Ожидаемый результат: ошибка ArithmeticException с описанием "Скидка должна быть в диапазоне от 0 до 100%"
+        assertThatThrownBy(() -> someService.calculatingDiscount(1000, -10))
+                .isInstanceOf(ArithmeticException.class).hasMessage("Скидка должна быть в диапазоне от 0 до 100%");
     }
 
     @Test
-    void checkMiddle6Array(){
-        boolean actual = service.firstLast6(new int[]{0,6,0});
-        assertFalse(actual);
+    void discountMore100ReturnException() {
+        // Процент > 100
+        // Ожидаемый результат: ошибка ArithmeticException с описанием "Скидка должна быть в диапазоне от 0 до 100%"
+        assertThatThrownBy(() -> someService.calculatingDiscount(1000, 101))
+                .isInstanceOf(ArithmeticException.class).hasMessage("Скидка должна быть в диапазоне от 0 до 100%");
     }
 
     @Test
-    void checkAndFirstAndLast6Array(){
-        boolean actual = service.firstLast6(new int[]{6,0,6});
-        assertTrue(actual);
-    }
-    /******************************************************/
-    @ParameterizedTest
-    @CsvSource(value = {"100, 50", "200, 50", "1000, 20"})
-    void checkCalculateDiscountPositive(double purchase, int discount){
-        double actual = service.calculatingDiscount(purchase, discount);
-        assertThat(actual).isEqualTo(purchase - purchase * discount / 100);
+    void calculatingCorrectDiscount() {
+        // Тесты на корректность результата
+        // Ожидаемый результат: Метод возвращает верную сумму 1000 - 25%*1000 = 750
+        assertThat(someService.calculatingDiscount(1000, 25)).isEqualTo(750);
+        assertThat(someService.calculatingDiscount(1000, 100)).isEqualTo(0);
+        assertThat(someService.calculatingDiscount(1000, 0)).isEqualTo(1000);
     }
 
-    @ParameterizedTest
-    @CsvSource(value = {"-100, 50", "-200, 50", "-1000, 20"})
-    void checkCalculateDiscountWithNegPurchaseNegative(double purchase, int discount){
-        Exception exc = assertThrows(IllegalArgumentException.class,
-                ()-> service.calculatingDiscount(purchase, discount));
-        assertEquals(exc.getMessage(), "purchase can't be less than zero");
-    }
-    @ParameterizedTest
-    @CsvSource(value = {"100, -50", "200, -50", "1000, -20"})
-    void checkCalculateDiscountWithNegDiscNegative(double purchase, int discount){
-        Exception exc = assertThrows(IllegalArgumentException.class,
-                ()-> service.calculatingDiscount(purchase, discount));
-        assertEquals(exc.getMessage(), "discount can't be less than zero");
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {"100, 150", "200, 150", "1000, 120"})
-    void checkCalculateDiscountWithBigDiscountNegative(double purchase, int discount){
-        Exception exc = assertThrows(IllegalArgumentException.class,
-                ()-> service.calculatingDiscount(purchase, discount));
-        assertEquals(exc.getMessage(), "discount can't be greater than zero");
-    }
-
-    /******************************************************/
-
+    // 3.4.
     @Test
-    void checkSumThreeNumbersPositiveResult(){
-        int actual = service.calculatingSumThreeNumbers(1, 2, 3);
-        assertThat(actual).isEqualTo(6);
+    void luckySumReturnSumWithout13() {
+        assertThat(someService.luckySum(2, 3, 13)).isEqualTo(5);
+        assertThat(someService.luckySum(2, 13, 9)).isEqualTo(11);
+        assertThat(someService.luckySum(13, 9, 9)).isEqualTo(18);
+        assertThat(someService.luckySum(9, 9, 9)).isEqualTo(27);
     }
 
     @Test
-    void checkSumThreeNumbersNegativeResult(){
-        assertThat(service.calculatingSumThreeNumbers(13, 2, 3))
-                .isEqualTo(5);
-        assertThat(service.calculatingSumThreeNumbers(1, 2, 13))
-                .isEqualTo(3);
-        assertThat(service.calculatingSumThreeNumbers(1, 13, 3))
-                .isEqualTo(4);
-
-        assertThat(service.calculatingSumThreeNumbers(13, 2, 13))
-                .isEqualTo(2);
-        assertThat(service.calculatingSumThreeNumbers(1, 13, 13))
-                .isEqualTo(1);
-        assertThat(service.calculatingSumThreeNumbers(13, 13, 3))
-                .isEqualTo(3);
-
-        assertThat(service.calculatingSumThreeNumbers(13, 13, 13))
-                .isEqualTo(0);
+    void evenOddNumber() {
+        assertTrue(someService.evenOddNumber(2));
+        assertFalse(someService.evenOddNumber(1));
     }
 
+    @Test
+    void numberInInterval() {
+       assertTrue(someService.numberInInterval(26));
+       assertFalse(someService.numberInInterval(1));
+    }
 }

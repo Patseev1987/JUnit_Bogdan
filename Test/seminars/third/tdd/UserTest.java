@@ -1,102 +1,70 @@
 package seminars.third.tdd;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserTest {
-    static UserRepository repository;
-    @BeforeAll
-    static void setUp(){
-        repository = new UserRepository();
+    /**
+     * 3.6. Нужно написать класс User (пользователь) с методом аутентификации по логину и паролю,
+     * (В метод передаются логин и пароль, метод возвращает true, если пароль и логин совпадают, иначе - false)
+     */
+    @Test
+    void userCreation() {
+        User user = new User("user_0", "psw123", false);
+        assertTrue(user.authenticate("user_0", "psw123"));
     }
 
     @Test
-    void checkAuthenticateUserPositive(){
-        String name = "name";
-        String password = "password";
+    void userCreationFailed() {
+        User user = new User("user_0", "123psw", false);
+        assertFalse(user.authenticate("user_0", "psw123"));
+    }
 
-        User user = new User(name, password, false);
-        boolean accept = user.authenticate(name, password);
-        assertTrue(accept);
+    /**
+     * 3.7. Нужно добавить класс UserRepository (Хранилище для работы с пользователями)
+     * (В метод передается пользователь, если он зарегистрирован в системе (authenticate возвращает true)
+     * то он попадает в список пользователей системы.
+     */
+    @Test
+    void userRepository() {
+        UserRepository userRepository = new UserRepository();
+        User userNA = new User("user_0", "psw123", false);
+        userRepository.addUser(userNA);
+        assertFalse(userRepository.findByName(userNA.name));
     }
 
     @Test
-    void checkAuthenticateUserNegative(){
-        String name = "name";
-        String password = "password";
-        String wrongPassword = "wrongPassword";
-
-        User user = new User(name, password, false);
-        boolean accept = user.authenticate(name, wrongPassword);
-        assertFalse(accept);
+    void userRepositoryNA() {
+        UserRepository userRepository = new UserRepository();
+        User userNA = new User("user_0", "psw123", false);
+        userNA.authenticate("user_0", "psw23");
+        userRepository.addUser(userNA);
+        assertFalse(userRepository.findByName(userNA.name));
     }
 
     @Test
-    void checkRepositoryAddAuthenticatedUserPositive(){
-        String name = "name";
-        String password = "password";
+    void adminHasAccessListUsers() {
 
-        User user = new User(name, password, false);
-        user.authenticate(name, password);
+        //  User userAdmin = new User("user_a", "psw123", true);
+        UserRepository userRepository = new UserRepository();
 
-        int currentCount = repository.data.size();
-        repository.addUser(user);
+        User userNotAdmin1 = new User("user_0", "psw0", false);
+        User userNotAdmin2 = new User("user_1", "psw1", false);
 
-       assertThat(repository.data.size())
-               .isEqualTo(currentCount + 1);
+        //   userAdmin.authenticate("user_a","psw123");
+        userNotAdmin1.authenticate("user_0", "psw0");
+        userNotAdmin2.authenticate("user_1", "psw1");
 
-       User userInRepository =
-               repository.data.get(repository.data.size() - 1);
+        //   userRepository.addUser(userAdmin);
+        userRepository.addUser(userNotAdmin1);
+        userRepository.addUser(userNotAdmin2);
 
-       assertEquals(user, userInRepository);
-    }
+        userRepository.logoutAll();
 
-    @Test
-    void checkRepositoryAddNotAuthenticatedUserNegative(){
-        String name = "name";
-        String password = "password";
+        assertFalse(userNotAdmin1.isAuthenticate);
 
-        User user = new User(name, password, false);
-
-        int currentCount = repository.data.size();
-        repository.addUser(user);
-
-        assertThat(repository.data.size())
-                .isEqualTo(currentCount);
-    }
-
-
-
-
-
-    @Test
-    void checkRepositoryFindAdminPositive (){
-        String name = "name";
-        String password = "password";
-
-        User user = new User(name, password, true);
-        boolean accept =  user.authenticate(name,password);
-        repository.addUser(user);
-        repository.logOutExceptAdmin();
-        User userForCheck = repository.data.get(0);
-        assertThat(userForCheck.isAuthenticate).isTrue();
-
-    }
-
-    @Test
-    void checkRepositoryFindAdminNegative (){
-        String name = "name";
-        String password = "password";
-
-        User user = new User(name, password, false);
-        boolean accept =  user.authenticate(name,password);
-        repository.addUser(user);
-        repository.logOutExceptAdmin();
-        User userForCheck = repository.data.get(0);
-        assertThat(userForCheck.isAuthenticate).isFalse();
     }
 }

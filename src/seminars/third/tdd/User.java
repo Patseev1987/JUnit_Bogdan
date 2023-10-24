@@ -1,37 +1,29 @@
 package seminars.third.tdd;
 
-import java.util.Objects;
-
 public class User {
 
     String name;
     String password;
-
-    boolean isAuthenticate = false;
-
-
     boolean isAdmin;
+    boolean isAuthenticate = false;
 
     public User(String name, String password, boolean isAdmin) {
         this.name = name;
         this.password = password;
         this.isAdmin = isAdmin;
     }
-    public boolean isAdmin() {
-        return isAdmin;
-    }
 
-    //3.6.
     public boolean authenticate(String name, String password) {
-
-        isAuthenticate = Objects.equals(this.name, name) &&
-                Objects.equals(this.password, password);
-        return isAuthenticate;
+        if (name.equals(this.name) && password.equals(this.password)) {
+            isAuthenticate = true;
+            return true;
+        } else {
+            isAuthenticate = false;
+            return false;
+        }
     }
 
-    public void logout() {
-        isAuthenticate = false;
-        name = "";
-        password = "";
+    public void logOut() {
+        this.isAuthenticate = false;
     }
 }

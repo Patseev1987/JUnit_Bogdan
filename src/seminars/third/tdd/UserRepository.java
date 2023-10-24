@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
-
-    // Тут можно хранить аутентифицированных пользователей
     List<User> data = new ArrayList<>();
 
     public void addUser(User user) {
-       if(!user.isAuthenticate) return;
-       data.add(user);
+        if (user.isAuthenticate) {
+            data.add(user);
+        }
     }
 
     public boolean findByName(String username) {
@@ -22,11 +21,9 @@ public class UserRepository {
         return false;
     }
 
-    public void logOutExceptAdmin() {
-        for (User user:data) {
-            if (!(user.isAdmin)){
-                user.logout();
-            }
+    public void logoutAll() {
+        for (int i = 0; i < data.size(); i++) {
+            data.get(i).isAuthenticate = false;
         }
     }
 }
