@@ -18,11 +18,11 @@ public class AverageSumAndComparator {
 
      public void compareTwoLists (){
      if (getAverageSumForFirstList()>getAverageSumForSecondList()){
-         System.out.println("Первый список имеет большее среднее значени");
+         System.out.print("Первый список имеет большее среднее значение");
      }else if (getAverageSumForFirstList()<getAverageSumForSecondList()){
-         System.out.println("Второй список имеет большее среднее значение");
+         System.out.print("Второй список имеет большее среднее значение");
      }else{
-         System.out.println("Средние значения равны");
+         System.out.print("Средние значения равны");
      }
  }
 
