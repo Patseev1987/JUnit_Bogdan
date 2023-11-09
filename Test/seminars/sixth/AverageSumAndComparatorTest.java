@@ -4,7 +4,7 @@ import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.StringWriter;
+
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
@@ -13,7 +13,7 @@ public class AverageSumAndComparatorTest {
 
     ListWithNumbers<Integer> list1;
     ListWithNumbers<Double> list2;
-    PrintStream consoleStream = System.out;
+
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
 
